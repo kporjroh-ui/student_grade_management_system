@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Enrollment Page</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="app">
+
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="main container-fluid">
+        <!--Student Info-->
+            <div class="row mt-4">
+                <div class="col-6">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-4">
+                                <img src="/images/imagedummy2.jpeg" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="|${student.firstName} ${student.lastName}|">Student Name</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item" style="border: none;" th:text="${student.studentID}">Student ID: 123456789</li>
+                                        <li class="list-group-item" style="border: none;" th:text="${student.email}">Email: </li>
+                                        <li class="list-group-item" style="border: none;" th:text="${student.phoneNumber}">Phone: 123-456-7890</li>
+                                        <li class="list-group-item" style="border: none;" >Enrollment Date: 00/00/0000</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card" style="width: 18rem;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" style="border: none;"  >Program: <b>Computer science</b></li>
+                            <li class="list-group-item" style="border: none;" >Year: <b>Sophomore</b></li>
+                            <li class="list-group-item" style="border: none;" >Major: <b>Computer Science</b></li>
+                            <li class="list-group-item" style="border: none;" >Status: <b>Fully Active</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        <!--Course Info-->
+        <div class="row">
+            <div class="col-6">
+                <h5 class="text-center mt-4 mb-4">Available Courses</h5>
+                <table class="table table-striped-columns table-responsive table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Course Code</th>
+                            <th scope="col">Course Name</th>
+                            <th scope="col">Credit Hours</th>
+                            <th scope="col">Semester Name</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${courses}">
+                            <td th:text="${c.courseCode}">data</td>
+                            <td th:text="${c.courseName}">data</td>
+                            <td th:text="${c.courseCreditHours}">data</td>
+                            <td>
+                                <select class="form-control form-select" name="semesterName" th:attr="form=${'enroll-' + c.courseID}">
+                                    <option selected>Choose one…</option>
+                                    <option value="Spring 2027">Spring 2027</option>
+                                    <option value="Summer 2027">Summer 2027</option>
+                                    <option value="Fall 2027">Fall 2027</option>
+                                </select>
+                            </td>
+                            <td>
+                                <form method="post" th:id="${'enroll-' + c.courseID}" th:action="@{/enrollment/{sid}/enroll(sid=${student.studentID})}">
+                                    <input type="hidden" name="courseID" th:value="${c.courseID}">
+                                    <button type="submit" class="btn-solid theme-primary">Enroll</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!--Enrolled Courses Table-->
+            <div class="col-6">
+                <h5 class="text-center mt-4 mb-4">Enrolled Courses</h5>
+                <table class="table table-striped-columns table-responsive">
+                    <thead>
+                    <tr>
+                        <th scope="col">Course Code</th>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Credit Hours</th>
+                        <th scope="col">Semester Name</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="e : ${enrollments}">
+                            <td th:text="${e.course.courseCode}">data</td>
+                            <td th:text="${e.course.courseName}">data</td>
+                            <td th:text="${e.course.courseCreditHours}">data</td>
+                            <td th:text="${e.semesterName}">data</td>
+                            <td>
+                                <form method="post" th:action="@{/enrollments/{sid}/drop/{eid}(sid=${student.studentID}, eid=${e.id})}">
+                                    <button type="submit" class="btn-outline theme-danger">Drop</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(enrollments)}">
+                            <td colspan="5" class="text-center text-muted" >No Enrolled Courses Yet!!!</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!--Enrollment Rules-->
+                <div class="card-group">
+                    <div class="card-header">Enrollment Rules</div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-numbered">
+                                <li class="list-group-item noborder" style="border: none;">Students can enroll in a maximum of 6 courses per semester.</li>
+                                <li class="list-group-item noborder" style="border: none;">Students must be enrolled in at least 3 courses to graduate.</li>
+                                <li class="list-group-item" style="border: none;">Course hours are automatically calculated based on enrolled courses.</li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
+</html>

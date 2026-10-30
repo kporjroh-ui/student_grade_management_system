@@ -1,0 +1,17 @@
+Response package (DTOs) dependencies:
+
+Depends on: Model (maps fields from entities)
+Does NOT depend on: Repository, Controller, Config
+
+Who depends on Response/DTO:
+
+Service → builds DTOs from entities before returning
+Controller → returns DTOs (not raw entities) to the client
+
+Why it exists:
+
+Hides internal fields (password hashes, etc.)
+Avoids infinite recursion from bidirectional entity relationships
+Decouples API shape from DB schema
+
+Service → builds → Response DTO → returned by Controller

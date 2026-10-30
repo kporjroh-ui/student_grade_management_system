@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>List Of Students</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  </head>
+
+  <body>
+  <div class="app">
+  <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="main container-fluid">
+      <h1 class="text-center mt-4 mb-4">List Of All Students</h1>
+      <form th:action="@{/students/search}" class="form-inline mb-3">
+        <div class="input-group mb-3">
+          <input type="number" name="query" class="form-control me-2" th:value="${query}" placeholder="Enter Student ID to search" aria-label="Student's ID number" aria-describedby="button-addon2">
+          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+        </div>
+      </form>
+
+      <table class="table table-striped-columns">
+        <thead>
+        <tr>
+          <th scope="col">Student ID</th>
+          <th scope="col">Student Name</th>
+          <th scope="col">Email </th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+          <td th:text = "${student.studentID}">data</td>
+          <td th:text = "|${student.firstName} ${student.lastName}|">data</td>
+          <td th:text = "${student.email}">data</td>
+          <td th:text = "${student.phoneNumber}">data</td>
+          <td>
+            <a th:href="@{/students/{studentID}(studentID=${student.studentID})}" class="btn btn-primary">View</a>
+            <a th:href="@{/students/edit/{studentID}(studentID=${student.studentID})}" class="btn btn-warning">Edit</a>
+            <a th:href="@{/students/{studentID}/delete(studentID=${student.studentID})}" class="btn btn-danger">Delete</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </div>
+  </body>
+</html>

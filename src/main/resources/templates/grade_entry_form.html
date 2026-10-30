@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Grade Entry Form</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
+
+    </head>
+    <body>
+    <div class="app">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <header class="header">Admin</header>
+
+        <div class="main container-fluid justify-content-center mt-5">
+            <form th:action="@{/grade_entry_form}" role="form" class="text-center border rounded p-5 shadow-sm" method="post" th:object="${gradesModel}">
+                <h4>Enter Grade</h4>
+
+                Course dropdown and student dropdown
+                <div class="row mb-3">
+                    <div class="col-3"></div> <!--Empty div for spacing-->
+
+                    <div class="col-3">
+                        <label for="course">Course ID</label>
+                        <select class="form-select" th:field="*{enrollment.enrollmentID}" id="course">
+                            <option value="">Select student</option>
+                            <option th:each="e : ${enrollments}"
+                                    th:value="${e.enrollmentid}"
+                                    th:text="${e.course.courseName + ' ' + e.course.courseCode}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <label for="student">Student ID:</label>
+                        <select class="form-select" th:field="*{enrollment.enrollmentID}" id="student">
+                            <option value="">Select student</option>
+                            <option th:each="e : ${enrollments}"
+                                    th:value="${e.enrollmentID}"
+                                    th:text="${e.student.firstName + ' ' + e.student.lastName}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-3"></div> <!--Empty div for spacing-->
+                </div>
+
+                <!--Assessment Type dropdown and date-->
+                <div class="row mb-3">
+                    <div class="col-3"></div>
+                    <div class="col-3">
+                        <label for="assessment_type" class="form-label">Assessment Type</label>
+                        <select class="form-select" aria-label="Default select example" id="assessment_type" name="assessmentType" th:field="*{assessmentType}">
+                            <option value="">Select Type</option>
+                            <option th:each="type : ${assessmentTypes}" th:value="${type}" th:text="${type}"></option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" class="form-control" name="assessmentDate" th:field="*{assessmentDate}" required>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+
+                <!--Score & max Score-->
+                <div class="row mb-3">
+                    <div class="col-3"></div>
+                    <div class="col-3">
+                        <label for="score">Score</label>
+                        <input type="number" id="score" class="form-control" name="" th:field="*{score}" required>
+                        <p th:if="${#fields.hasErrors('score')}" class="text-danger-emphasis" th:errors="*{score}"></p>
+                    </div>
+                    <div class="col-3">
+                        <label for="max score">Max Score</label>
+                        <input type="number" id="max score" class="form-control" name="" th:field="*{maxScore}" required>
+                        <p th:if="${#fields.hasErrors('score')}" class="text-danger-emphasis" th:errors="*{maxScore}"></p>
+                    </div>
+                    <div class="col-3"></div> <!--Empty div for spacing-->
+                </div>
+
+                <!--Weight-->
+                <div class="row mb-3">
+                    <div class="col-3"></div>
+                    <div class="col-6 badge text-bg-info text-wrap">
+                        <h6 th:field="*{weight}">Percentage/Letter Grade</h6>
+                        <p th:if="${#fields.hasErrors('weight')}" class="text-danger-emphasis" th:errors="*{weight}"></p>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+
+                <!--Comments-->
+                <div class="row mb-3">
+                    <div class="col-3"></div>
+                    <div class="form-floating col-6">
+                        <label for="comments">Comments</label>
+                        <textarea type="text" class="form-control" placeholder="Leave a comment here" id="comments" style="height: 100px" name="" th:field="*{comments}"></textarea>
+                        <p th:if="${#fields.hasErrors('comments')}" class="text-danger-emphasis" th:errors="*{comments}"></p>
+                    </div>
+                    <div class="col-3"></div> <!--Empty div for spacing-->
+                </div>
+                <hr>
+
+                <button type="reset" class="btn btn-info">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Grade</button>
+
+            </form>
+        </div>
+    </div>
+
+
+<script>
+    var s = document.getElementById('score'), m = document.getElementById('max');
+    function upd() {
+        var p = (Number(s.value) / Number(m.value)) * 100 || 0;
+        document.getElementById('pct').textContent = p.toFixed(1) + '%';
+        document.getElementById('ltr').textContent = p >= 90 ? 'A' : p >= 85 ? 'B+' : p >= 80 ? 'B' : p >= 75 ? 'C+' : p >= 70 ? 'C' : 'D';
+    }
+    s.addEventListener('input', upd); m.addEventListener('input', upd); upd();
+</script>
+</body>
+</html>
